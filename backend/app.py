@@ -11,31 +11,30 @@ from sklearn.metrics.pairwise import cosine_similarity
 app = Flask(__name__)
 CORS(app)
 
-# =========================
-# 🔑 API Keys
-# =========================
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip()
-GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip() or "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"
 
-# ✅ Pastikan OpenAI diinisialisasi hanya kalau ada key
+#  API Keys
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "").strip() or "API AI"
+GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip() or "APi Ai"
+
+
 client = None
 if OPENAI_API_KEY:
     client = OpenAI(api_key=OPENAI_API_KEY)
 
-# =========================
-# 📁 File JSON Path
-# =========================
+
+#  File JSON Path
+
 BASE_DIR = os.path.dirname(__file__)
-QNA_FILE = os.path.abspath(os.path.join(BASE_DIR, "../database/data.json"))
+QNA_FILE = os.path.abspath(os.path.join(BASE_DIR, "DATABASE QNA"))
 YOU_JSON = os.path.abspath(os.path.join(BASE_DIR, ""))  # perbaikan: sebelumnya kosong!
-EMBED_FILE = os.path.abspath(os.path.join(BASE_DIR, "../database/matain.json"))
+EMBED_FILE = os.path.abspath(os.path.join(BASE_DIR, "DATABASE FOR SWITCH YOUR MACHINE LEARNING"))
 MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 
 chat_history = []
 
-# =========================
-# 📂 JSON Loader/Saver
-# =========================
+# JSON Loader/Saver
+
 def load_json(path):
     if not os.path.exists(path):
         save_json(path, [])
@@ -48,7 +47,7 @@ def load_json(path):
             data = json.loads(content)
             return data if isinstance(data, list) else []
     except Exception as e:
-        print(f"⚠️ Error membaca {os.path.basename(path)}: {e}")
+        print(f"⚠️ Error process {os.path.basename(path)}: {e}")
         return []
 
 def save_json(path, data):
@@ -56,11 +55,11 @@ def save_json(path, data):
         with open(path, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
     except Exception as e:
-        print(f"⚠️ Gagal menyimpan {os.path.basename(path)}: {e}")
+        print(f"⚠️ Fail FIle {os.path.basename(path)}: {e}")
 
-# =========================
-# Load data awal
-# =========================
+
+# Database QNA
+
 data = load_json(QNA_FILE)
 forum_data = load_json(YOU_JSON)
 embeddings_data = load_json(EMBED_FILE) if os.path.exists(EMBED_FILE) else []
@@ -69,9 +68,8 @@ if not os.path.exists(EMBED_FILE):
 
 forum_embeddings = np.array(MODEL.encode(forum_data)) if forum_data else np.array([])
 
-# =========================
-# 🧩 Fungsi utilitas
-# =========================
+# Simple Marchine Learning(You Can Delete The Code If You Have Marchine Learning)
+
 def add_to_log(user_msg, ai_reply):
     embeddings_data.append({"user": user_msg, "ai": ai_reply})
     save_json(EMBED_FILE, embeddings_data)
@@ -91,13 +89,12 @@ def update_embeddings():
     forum_embeddings = np.array(MODEL.encode(forum_data))
     save_json(YOU_JSON, forum_data)
 
-# =========================
-# 🤖 LLM Functions
-# =========================
+
+# Ai Example For Mix Your AI and Ai Smart and Famous
+
 def call_openai(messages):
-    """Memanggil OpenAI API"""
     if not client:
-        print("⚠️ OpenAI API key tidak ditemukan.")
+        print("⚠️ OpenAI API key Not Found.")
         return None
     try:
         completion = client.chat.completions.create(
@@ -110,7 +107,6 @@ def call_openai(messages):
         return None
 
 def call_groq(messages):
-    """Memanggil Groq API"""
     try:
         headers = {
             "Authorization": f"Bearer {GROQ_API_KEY}",
@@ -134,9 +130,8 @@ def call_groq(messages):
         print("⚠️ Groq AI Error:", e)
         return None
 
-# =========================
-# 🌐 Routes
-# =========================
+# Routes
+
 FRONTEND = os.path.abspath("../frontend")
 BACKEND = os.path.abspath("../backend")
 
@@ -153,16 +148,16 @@ def index():
 
 @app.route("/<path:filename>")
 def serve_static(filename):
-    # otomatis melayani file CSS, JS, atau media
+  
     for folder in [FRONTEND, BACKEND]:
         file_path = os.path.join(folder, filename)
         if os.path.exists(file_path):
             return send_from_directory(folder, filename)
     return jsonify({"error": "File tidak ditemukan"}), 404
 
-# =========================
-# 💬 Chat Endpoint
-# =========================
+
+# Chat Endpoint
+
 @app.route("/chat", methods=["POST"])
 def chat():
     global chat_history
@@ -174,7 +169,7 @@ def chat():
 
     chat_history.append({"role": "user", "content": user_msg})
 
-    # 1️ Cek di data.json
+    # 1️ Check Database QNA
     for item in data:
         if user_msg == item.get("tanya", "").strip().lower():
             answer = item.get("jawab", "")
@@ -182,14 +177,14 @@ def chat():
             add_to_log(user_msg, answer)
             return jsonify({"reply": answer})
 
-    # 2️ Cek kemiripan semantik di you.json
+    # 2️ Check Your Machine Learning
     answer, best_idx = get_best_answer(user_msg)
     if answer:
         chat_history.append({"role": "assistant", "content": answer})
         add_to_log(user_msg, answer)
         return jsonify({"reply": answer, "index": int(best_idx)})
 
-    # 3️ Fallback ke OpenAI atau Groq
+    # 3️ Fallback Ai Smart{You can change no should open ai or grock}
     system_prompt = {"role": "system", "content": "Jawab hanya berdasarkan konteks database."}
     messages = [system_prompt, *chat_history]
 
@@ -200,16 +195,15 @@ def chat():
         add_to_log(user_msg, reply)
         return jsonify({"reply": reply})
 
-    # 4️⃣ Jika semua gagal
-    default_reply = "Maaf, saya tidak mengerti pertanyaan itu."
+    # 4️⃣ Fall All
+    default_reply = "Your Massage"
     chat_history.append({"role": "assistant", "content": default_reply})
     add_to_log(user_msg, default_reply)
     return jsonify({"reply": default_reply})
 
-# =========================
-# 🚀 Jalankan server
-# =========================
+
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
+
 

@@ -27,7 +27,7 @@ if OPENAI_API_KEY:
 
 BASE_DIR = os.path.dirname(__file__)
 QNA_FILE = os.path.abspath(os.path.join(BASE_DIR, "DATABASE QNA"))
-YOU_JSON = os.path.abspath(os.path.join(BASE_DIR, ""))  # perbaikan: sebelumnya kosong!
+YOU_JSON = os.path.abspath(os.path.join(BASE_DIR, ""))  
 EMBED_FILE = os.path.abspath(os.path.join(BASE_DIR, "DATABASE FOR SWITCH YOUR MACHINE LEARNING"))
 MODEL = SentenceTransformer('all-MiniLM-L6-v2')
 
@@ -205,5 +205,6 @@ def chat():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False, use_reloader=False)
+
 
 

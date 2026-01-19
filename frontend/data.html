@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Sultan</title>
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href=" http://10.242.59.159:5000/data.css">
+</head>
+<style>
+      #bg-video {
+      position: fixed;
+      right: 0;
+      bottom: 0;
+      min-width: 100%;
+      min-height: 100%;
+      z-index: -1;
+      object-fit: cover;
+    }
+
+    </style>
+<body>
+    <video autoplay muted loop id="bg-video">
+    <source src="gadismanis.mp4" type="video/mp4">
+  </video>
+    <div class="chat-container">
+        <div id="chat-box" class="chat-box"></div>
+        <form id="chat-form" class="chat-form">
+            <input type="text" id="message-input" placeholder="Isi Propmt Terlebih Dahulu" autocomplete="off">
+            <button type="submit">➤</button>
+        </form>
+    </div>
+    <script type="module" src=" http://10.242.59.159:5000/data.js"></script>
+</body>
+</html>

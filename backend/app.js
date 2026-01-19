@@ -8,12 +8,12 @@ export function initChat() {
         return;
     }
 
-    // cegah form auto refresh (jaga-jaga kalau listener error)
+    //form auto refresh (save if listener error)
     form.setAttribute("novalidate", "true");
 
     form.addEventListener('submit', async function (e) {
-        e.preventDefault();       // cegah refresh
-        e.stopPropagation();      // cegah bubbling event
+        e.preventDefault();       
+        e.stopPropagation();      
         const message = input.value.trim();
 
         if (!message) return;
@@ -21,7 +21,7 @@ export function initChat() {
         addMessage(message, 'user');
         input.value = '';
 
-        // tampilkan animasi "bot mengetik"
+        // Answer Animation
         const typingEl = addMessage('Sultan Sedang Meneliti...', 'bot', true);
 
         try {
@@ -74,11 +74,12 @@ function typeWriter(text, sender) {
     typing();
 }
 
-// pastikan initChat aktif setelah halaman siap
+// Chat actived ware by page already
 document.addEventListener('DOMContentLoaded', () => {
     try {
         initChat();
     } catch (e) {
         console.error("Gagal inisialisasi chat:", e);
     }
+
 });
